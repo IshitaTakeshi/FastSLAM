@@ -11,11 +11,17 @@ from copy import deepcopy
 from world import World
 from particle import Particle
 
+
 class FastSlam(object):
     """Main class that implements the FastSLAM1.0 algorithm"""
-    def __init__(self, x, y, orien, particle_size = 50):
+
+    def __init__(self, x, y, orien, particle_size=50):
         self.world = World()
-        self.particles = [Particle(x, y, random.random()* 2.*math.pi) for i in xrange(particle_size)]
+
+        self.particles = []
+        for i in range(particle_size):
+            p = Particle(x, y, random.random() * 2. * math.pi)
+            self.particles.append(p)
         self.robot = Particle(x, y, orien, is_robot=True)
         self.particle_size = particle_size
 
@@ -35,7 +41,11 @@ class FastSlam(object):
                 self.turn_left(5)
             if self.world.turn_right(key_pressed):
                 self.turn_right(5)
-            self.world.render(self.robot, self.particles, self.get_predicted_landmarks())
+            self.world.render(
+                self.robot,
+                self.particles,
+                self.get_predicted_landmarks()
+            )
 
     def move_forward(self, step):
         self.robot.forward(step)
@@ -58,7 +68,7 @@ class FastSlam(object):
         index = int(random.random() * self.particle_size)
         beta = 0.0
         mw = max(weight)
-        for i in xrange(self.particle_size):
+        for i in range(self.particle_size):
             beta += random.random() * 2.0 * mw
             while beta > weight[index]:
                 beta -= weight[index]
@@ -71,7 +81,8 @@ class FastSlam(object):
     def get_predicted_landmarks(self):
         return self.particles[0].landmarks
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     random.seed(5)
     simulator = FastSlam(80, 140, 0, particle_size=200)
     simulator.run_simulation()
