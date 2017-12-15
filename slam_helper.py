@@ -20,7 +20,6 @@ def cal_direction(a, b):
 def multi_normal(x, mean, cov):
     """Calculate the density for a multinormal distribution"""
     den = 2 * math.pi * math.sqrt(linalg.det(cov))
-    num = np.exp(-0.5 * np.transpose((x - mean)
-                                     ).dot(linalg.inv(cov)).dot(x - mean))
+    num = np.exp(-0.5 * np.transpose((x - mean)).dot(linalg.inv(cov)).dot(x - mean))
     result = num / den
     return result[0][0]

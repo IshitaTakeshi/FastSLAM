@@ -8,8 +8,12 @@ import sys
 import random
 import math
 from copy import deepcopy
+
+import numpy as np
+
 from world import World
 from particle import Particle
+from util import degree_to_radian
 
 
 class FastSlam(object):
@@ -18,10 +22,8 @@ class FastSlam(object):
     def __init__(self, x, y, orien, particle_size=50):
         self.world = World()
 
-        self.particles = []
-        for i in range(particle_size):
-            p = Particle(x, y, random.random() * 2. * math.pi)
-            self.particles.append(p)
+        R = np.random.uniform(0, 2. * math.pi, particle_size)
+        self.particles = [Particle(x, y, r) for r in R]
         self.robot = Particle(x, y, orien, is_robot=True)
         self.particle_size = particle_size
 
@@ -38,9 +40,9 @@ class FastSlam(object):
                     p.update(obs)
                 self.particles = self.resample_particles()
             if self.world.turn_left(key_pressed):
-                self.turn_left(5)
+                self.turn_left(degree_to_radian(5))
             if self.world.turn_right(key_pressed):
-                self.turn_right(5)
+                self.turn_right(degree_to_radian(5))
             self.world.render(
                 self.robot,
                 self.particles,
@@ -64,14 +66,14 @@ class FastSlam(object):
 
     def resample_particles(self):
         new_particles = []
-        weight = [p.weight for p in self.particles]
-        index = int(random.random() * self.particle_size)
+        weights = [p.weight for p in self.particles]
+        index = np.random.randint(0, self.particle_size)
         beta = 0.0
-        mw = max(weight)
+        mw = max(weights)
         for i in range(self.particle_size):
             beta += random.random() * 2.0 * mw
-            while beta > weight[index]:
-                beta -= weight[index]
+            while beta > weights[index]:
+                beta -= weights[index]
                 index = (index + 1) % self.particle_size
             new_particle = deepcopy(self.particles[index])
             new_particle.weight = 1

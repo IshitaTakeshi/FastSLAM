@@ -17,7 +17,7 @@ class Landmark(Point):
     def update(self, mu, sig):
         self.mu = mu
         self.sig = sig
-        super().update(x=self.mu[0][0], y=self.mu[1][0])
+        super().update(self.mu.flatten())
 
     def __str__(self):
         return str(self.position)

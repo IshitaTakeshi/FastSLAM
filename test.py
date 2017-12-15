@@ -5,6 +5,7 @@ from particle2 import Particle2
 from landmark import Landmark
 from slam_helper import *
 import numpy as np
+from numpy.testing import assert_array_equal
 
 
 class FastSLAMTest(unittest.TestCase):
@@ -49,7 +50,7 @@ class FastSLAMTest(unittest.TestCase):
         for o in obs:
             prob, idx, ass_obs, ass_jacobian, ass_adjcov = robot.find_data_association(
                 o)
-            self.assertEqual(robot.landmarks[idx].position, (45, 60))
+            assert_array_equal(robot.landmarks[idx].position, [45, 60])
             robot.update_landmark(np.transpose(
                 np.array([o])), idx, ass_obs, ass_jacobian, ass_adjcov)
             x, y = robot.landmarks[idx].position
